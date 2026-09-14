@@ -111,6 +111,7 @@ tr.mainC td:last-child{border-radius:0 6px 6px 0}
       <option value="dps">按总 DPS 降序</option>
       <option value="main">按主C DPS 降序</option>
       <option value="max">按最强一击降序</option>
+      <option value="role">按角色分组</option>
     </select>
     <button id="toggleAll">全部展开</button>
     <span class="count" id="count"></span>
@@ -217,7 +218,7 @@ const TEAMS=[
 
 const WEAPON={
   "纳西妲":"流浪乐章","神里绫华":"雾切","兹白":"静水","菲林斯":"和璞鸢","桑多涅":"狼末","丝柯克":"雾切",
-  "阿蕾奇诺":"护摩","莉奈娅":"若水","奥黛塔":"星锋剑","叶洛亚":"匣里灭辰","茜特菈莉":"祭礼","砂糖":"祭礼",
+  "阿蕾奇诺":"护摩","莉奈娅":"若水","奥黛塔":"星锋剑","叶洛亚":"匣里灭辰","茜特菈莉":"祭礼","砂糖":"祭礼","久岐忍":"西福斯",
   "梦见月瑞希":"纺琴",
   "哥伦比娅":"专武","那维莱特":"专武","申鹤":"专武","雷电将军":"专武","爱可菲":"专武","魈":"专武","伊涅芙":"专武",
   "希诺宁":"西风","芙宁娜":"西风","夜兰":"西风","珐露珊":"西风","夏沃蕾":"西风","行秋":"西风"
@@ -275,7 +276,13 @@ function render(){
   let arr=TEAMS.filter(t=>!kw||t.members.some(m=>m.includes(kw)));
   const s=sort.value;
   const key=t=>s==="main"?t.mainDps:s==="max"?t.max:t.dps;
-  arr=[...arr].sort((a,b)=>key(b)-key(a));
+  if(s==="role"){
+    const best=new Map();
+    arr.forEach(t=>{const m=t.members[0];if(!best.has(m)||t.dps>best.get(m))best.set(m,t.dps);});
+    arr=[...arr].sort((a,b)=>best.get(b.members[0])-best.get(a.members[0])||b.dps-a.dps);
+  }else{
+    arr=[...arr].sort((a,b)=>key(b)-key(a));
+  }
   count.textContent=kw?`匹配 ${arr.length} / ${TEAMS.length} 支队伍`:`共 ${arr.length} 支队伍`;
   list.innerHTML=arr.map((t,i)=>{
     const rank=i+1;
