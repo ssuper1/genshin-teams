@@ -53,8 +53,14 @@ h1{font-size:20px;font-weight:600;margin-bottom:4px}
 .card.open .arrow{transform:rotate(180deg)}
 .detail{display:none;border-top:1px solid var(--line2);padding:16px 18px 14px}
 .card.open .detail{display:block}
-.tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px}
 .tbl h3{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:8px}
+.tbl{min-width:0}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:3px}
+.tscroll::-webkit-scrollbar{height:6px}
+.tscroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,.18);border-radius:3px}
+.hint{display:none}
+@media(max-width:760px){.hint{display:block;font-size:11px;color:var(--tx3);margin-top:5px}}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th{text-align:left;color:var(--tx3);font-weight:400;font-size:11.5px;padding:4px 6px;border-bottom:1px solid var(--line2);white-space:nowrap}
 td{padding:5px 6px;border-bottom:1px solid var(--line2);white-space:nowrap}
@@ -94,7 +100,7 @@ tr.mainC td:last-child{border-radius:0 6px 6px 0}
 </div>
 <div class="wrap" id="app">
   <h1>轰鸣木桩 · 队伍伤害报告</h1>
-  <p class="sub">UID 202392598 · 满能量启动 · 木桩 100 级 · 全抗 10% · 防御 100% · 共 15 支队伍</p>
+  <p class="sub">满能量启动 · 木桩 100 级 · 全抗 10% · 防御 100% · 共 15 支队伍</p>
   <div class="bar">
     <input id="q" type="search" placeholder="搜索角色名，如：阿蕾奇诺">
     <select id="sort">
@@ -272,10 +278,12 @@ function render(){
       <div class="detail">
         <div class="tables">
           <div class="tbl"><h3>伤害明细</h3>
-            <table><thead><tr><th>角色</th><th class="num">DPS</th><th class="num">占比</th><th class="num">站场</th></tr></thead><tbody>${rows}</tbody></table>
+            <div class="tscroll"><table><thead><tr><th>角色</th><th class="num">DPS</th><th class="num">占比</th><th class="num">站场</th></tr></thead><tbody>${rows}</tbody></table></div>
+            <p class="hint">左右滑动查看完整表格</p>
           </div>
           <div class="tbl"><h3>属性面板</h3>
-            <table class="pnl"><thead><tr><th>角色</th><th>武器</th><th class="num">暴击/暴伤</th><th class="num">充能</th><th class="num">属性1</th><th class="num">属性2</th></tr></thead><tbody>${panels}</tbody></table>
+            <div class="tscroll"><table class="pnl"><thead><tr><th>角色</th><th>武器</th><th class="num">暴击/暴伤</th><th class="num">充能</th><th class="num">属性1</th><th class="num">属性2</th></tr></thead><tbody>${panels}</tbody></table></div>
+            <p class="hint">左右滑动查看完整表格</p>
           </div>
         </div>
         <div class="foot">
