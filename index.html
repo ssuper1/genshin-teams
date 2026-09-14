@@ -48,6 +48,7 @@ h1{font-size:20px;font-weight:600;margin-bottom:4px}
 .kpi{text-align:right;flex:none;width:92px}
 .kpi small{display:block;font-size:11px;color:var(--tx3)}
 .kpi b{font-size:19px;font-weight:600;color:var(--red)}
+.kpi .mdps{font-size:10.5px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi2{text-align:right;flex:none;width:96px}
 .kpi2 small{display:block;font-size:11px;color:var(--tx3)}
 .kpi2 b{font-size:14px;font-weight:500}
@@ -107,9 +108,9 @@ tr.mainC td:last-child{border-radius:0 6px 6px 0}
   <div class="bar">
     <input id="q" type="search" placeholder="搜索角色名，如：阿蕾奇诺">
     <select id="sort">
-      <option value="dps">按 DPS 降序</option>
-      <option value="total">按总伤害降序</option>
-      <option value="time">按用时升序</option>
+      <option value="dps">按总 DPS 降序</option>
+      <option value="main">按主C DPS 降序</option>
+      <option value="max">按最强一击降序</option>
     </select>
     <button id="toggleAll">全部展开</button>
     <span class="count" id="count"></span>
@@ -242,6 +243,8 @@ TEAMS.forEach(t=>{
   const mc=t.main[0], mp=t.panels.find(p=>p[0]===mc);
   t.crit=mp?mp[1]:"—";
   t.weapon=WEAPON[mc]||"";
+  t.mainDps=t.rows[0]?(t.rows[0][2]||0):0;
+  t.mainName=t.rows[0]?t.rows[0][0]:"";
 });
 const list=document.getElementById("list"),q=document.getElementById("q"),sort=document.getElementById("sort"),count=document.getElementById("count");
 let allOpen=false;
@@ -250,10 +253,11 @@ function render(){
   const kw=q.value.trim();
   let arr=TEAMS.filter(t=>!kw||t.members.some(m=>m.includes(kw)));
   const s=sort.value;
-  arr=[...arr].sort((a,b)=>s==="dps"?b.dps-a.dps:s==="total"?b.total-a.total:a.time-b.time);
+  const key=t=>s==="main"?t.mainDps:s==="max"?t.max:t.dps;
+  arr=[...arr].sort((a,b)=>key(b)-key(a));
   count.textContent=kw?`匹配 ${arr.length} / ${TEAMS.length} 支队伍`:`共 ${arr.length} 支队伍`;
   list.innerHTML=arr.map((t,i)=>{
-    const rank=TEAMS.indexOf(t)+1;
+    const rank=i+1;
     const rows=t.rows.map(r=>{
       const isMain=r===t.main, isTrans=r[0]==="剧变反应";
       const pctv=parseFloat(r[3]);
@@ -274,7 +278,7 @@ function render(){
       <div class="head">
         <span class="rank ${rank<=3?'top':''}">${rank}</span>
         <div class="tname"><div class="namescroll"><b>${t.members.map(m=>m+(CONST[m]?'<span class="csn">'+CONST[m]+'</span>':"")).join(" + ")}${t.tag?'<span class="tag">'+t.tag+"</span>":""}</b></div><div class="dpsbar"><i style="width:${(t.dps/maxDps*100).toFixed(1)}%"></i></div></div>
-        <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b></div>
+        <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b><small class="mdps">${t.mainName} ${fmt(t.mainDps)}</small></div>
         <div class="kpi2"><small>${t.main[0]} 暴击/暴伤</small><b>${t.crit}</b><small class="wp">${t.weapon?"（"+t.weapon+"）":""}</small></div>
         <span class="arrow">▼</span>
       </div>
