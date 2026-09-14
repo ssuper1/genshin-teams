@@ -54,9 +54,6 @@ h1{font-size:20px;font-weight:600;margin-bottom:4px}
 .kpi2 b{font-size:14px;font-weight:500}
 .arrow{flex:none;color:var(--tx3);font-size:12px;width:34px;text-align:center;transition:transform .2s}
 .card.open .arrow{transform:rotate(180deg)}
-.copybtn{flex:none;font-size:11px;color:var(--tx2);background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px 9px;cursor:pointer}
-.copybtn:hover{background:#f0f0f4}
-.copybtn.ok{color:#1a7f37;border-color:#9ccf9c}
 .detail{display:none;border-top:1px solid var(--line2);padding:16px 18px 14px}
 .card.open .detail{display:block}
 .tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px}
@@ -326,7 +323,6 @@ function render(){
         <div class="tname"><div class="namescroll"><b>${t.members.map(m=>m+(CONST[m]?'<span class="csn">'+CONST[m]+'</span>':"")+(t.wtag[m]?'<span class="wtag">('+t.wtag[m]+")</span>":"")).join(" + ")}${t.tag?'<span class="tag'+(t.tagWarn?" warn":"")+'">'+t.tag+"</span>":""}</b></div><div class="dpsbar"><i style="width:${(t.dps/maxDps*100).toFixed(1)}%"></i></div></div>
         <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b><small class="mdps">${s==="max"?t.maxBy+" "+fmt(t.max):t.mainName+" "+fmt(t.mainDps)}</small></div>
         <div class="kpi2"><small>${t.main[0]} 暴击/暴伤</small><b>${t.crit}</b></div>
-        <button class="copybtn" data-i="${TEAMS.indexOf(t)}">复制</button>
         <span class="arrow">▼</span>
       </div>
       <div class="detail">
@@ -353,27 +349,9 @@ function render(){
   list.querySelectorAll(".card").forEach(c=>{
     if(allOpen)c.classList.add("open");
     c.querySelector(".head").addEventListener("click",(e)=>{
-      if(e.target.closest(".copybtn"))return;
       const sel=window.getSelection?window.getSelection():null;
       if(sel&&String(sel).length>0)return;
       c.classList.toggle("open");syncHints();
-    });
-  });
-  list.querySelectorAll(".copybtn").forEach(b=>{
-    b.addEventListener("click",async e=>{
-      e.stopPropagation();
-      const t=TEAMS[+b.dataset.i];
-      const txt=t.members.map(m=>m+(CONST[m]||"")+(t.wtag[m]?"("+t.wtag[m]+")":"")).join(" + ")+(t.tag||"");
-      let ok=false;
-      try{await navigator.clipboard.writeText(txt);ok=true;}
-      catch(_){
-        const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
-        document.body.appendChild(ta);ta.select();
-        try{ok=document.execCommand("copy");}catch(_2){}
-        document.body.removeChild(ta);
-      }
-      b.textContent=ok?"已复制":"复制失败";b.classList.toggle("ok",ok);
-      setTimeout(()=>{b.textContent="复制";b.classList.remove("ok");},1200);
     });
   });
   syncHints();
