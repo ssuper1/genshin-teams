@@ -278,7 +278,7 @@ function render(){
       <div class="head">
         <span class="rank ${rank<=3?'top':''}">${rank}</span>
         <div class="tname"><div class="namescroll"><b>${t.members.map(m=>m+(CONST[m]?'<span class="csn">'+CONST[m]+'</span>':"")).join(" + ")}${t.tag?'<span class="tag">'+t.tag+"</span>":""}</b></div><div class="dpsbar"><i style="width:${(t.dps/maxDps*100).toFixed(1)}%"></i></div></div>
-        <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b><small class="mdps">${t.mainName} ${fmt(t.mainDps)}</small></div>
+        <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b><small class="mdps">${s==="max"?t.maxBy+" "+fmt(t.max):t.mainName+" "+fmt(t.mainDps)}</small></div>
         <div class="kpi2"><small>${t.main[0]} 暴击/暴伤</small><b>${t.crit}</b><small class="wp">${t.weapon?"（"+t.weapon+"）":""}</small></div>
         <span class="arrow">▼</span>
       </div>
