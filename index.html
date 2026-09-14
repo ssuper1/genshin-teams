@@ -40,7 +40,9 @@ h1{font-size:20px;font-weight:600;margin-bottom:4px}
 .rank{width:26px;text-align:center;font-size:13px;font-weight:600;color:var(--tx3);flex:none}
 .rank.top{color:var(--red)}
 .tname{flex:1;min-width:0}
-.tname b{font-size:15px;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.namescroll{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.namescroll::-webkit-scrollbar{display:none}
+.tname b{font-size:15px;font-weight:600;display:inline-block;white-space:nowrap;padding-right:2px}
 .dpsbar{height:4px;background:#eeeff2;border-radius:2px;margin-top:6px;overflow:hidden}
 .dpsbar i{display:block;height:100%;background:var(--red);border-radius:2px}
 .kpi{text-align:right;flex:none;width:92px}
@@ -270,7 +272,7 @@ function render(){
     return `<div class="card" data-idx="${TEAMS.indexOf(t)}">
       <div class="head">
         <span class="rank ${rank<=3?'top':''}">${rank}</span>
-        <div class="tname"><b>${t.members.map(m=>m+(CONST[m]?'<span class="csn">'+CONST[m]+'</span>':"")).join(" + ")}</b><div class="dpsbar"><i style="width:${(t.dps/maxDps*100).toFixed(1)}%"></i></div></div>
+        <div class="tname"><div class="namescroll"><b>${t.members.map(m=>m+(CONST[m]?'<span class="csn">'+CONST[m]+'</span>':"")).join(" + ")}</b></div><div class="dpsbar"><i style="width:${(t.dps/maxDps*100).toFixed(1)}%"></i></div></div>
         <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b></div>
         <div class="kpi2"><small>${t.main[0]} 暴击/暴伤</small><b>${t.crit}</b><small class="wp">${t.weapon?"（"+t.weapon+"）":""}</small></div>
         <span class="arrow">▼</span>
