@@ -111,10 +111,10 @@ tr.mainC td:last-child{border-radius:0 6px 6px 0}
   <div class="bar">
     <input id="q" type="search" placeholder="搜索角色名，如：阿蕾奇诺">
     <select id="sort">
-      <option value="role">按角色分组</option>
       <option value="dps">按总 DPS 降序</option>
       <option value="main">按主C DPS 降序</option>
       <option value="max">按最强一击降序</option>
+      <option value="role">按角色分组</option>
     </select>
     <button id="toggleAll">全部展开</button>
     <span class="count" id="count"></span>
@@ -261,7 +261,7 @@ const TEAMS=[
 {img:"pic/1834a3bf93c066c529367351ec07ca38.jpg",total:1985.65,dps:176502,max:232304,maxBy:"丝柯克",time:112.50,tag:"（芙勇者/剧团-爱冰伤/攻击杯-丝雾切/蝶变无大差别）",art:{"芙宁娜":"剧团"},
  members:["丝柯克","芙宁娜","沃雅妮莎","爱可菲"],
  rows:[["丝柯克",14298018,127094,"72.01%",175,"72秒 (64%)"],["芙宁娜",2525651,22450,"12.72%",148,"19秒 (17%)"],["沃雅妮莎",119180,1059,"0.60%",29,"6秒 (6%)"],["爱可菲",2913633,25899,"14.67%",113,"15秒 (13%)"],["剧变反应",0,0,"0.00%",null,"—"]],
- panels:[["丝柯克","73% / 212%","100%","73.60%","20571","2230","1015"],["芙宁娜","64% / 81%","199%","0.00%","39911","1054","777"],["沃雅妮莎","26% / 55%","133%","0.00%","54260","1005","539"],["爱可菲","64% / 243%","205%","0.00%","20947","2158","743"]]},
+ panels:[["丝柯克","73% / 212%","100%","73.60%","20571","2230","1015"],["芙宁娜","64% / 181%","199%","0.00%","39911","1054","777"],["沃雅妮莎","26% / 55%","133%","0.00%","54260","1005","539"],["爱可菲","64% / 243%","205%","0.00%","20947","2158","743"]]},
 {img:"pic/e45f5e75662b8bb2521de70c244b22c3.jpg",total:1386.98,dps:144075,max:496907,maxBy:"奥黛塔",time:96.27,wp:{"奥黛塔":"蝶变"},
  members:["梦见月瑞希","奥黛塔","沃雅妮莎","旅行者"],
  rows:[["梦见月瑞希",7713652,80127,"55.61%",214,"57秒 (59%)"],["奥黛塔",3830405,39789,"27.62%",119,"16秒 (17%)"],["沃雅妮莎",73319,762,"0.53%",30,"6秒 (7%)"],["旅行者",2241320,23282,"16.16%",88,"17秒 (18%)"],["剧变反应",11134,116,"0.08%",null,"—"]],
@@ -386,8 +386,15 @@ function render(){
     arr=[...arr].sort((a,b)=>key(b)-key(a));
   }
   count.textContent=kw?`匹配 ${arr.length} / ${TEAMS.length} 支队伍`:`共 ${arr.length} 支队伍`;
+  const prevDpsOf={};
+  if(s==="role"){
+    const last={};
+    arr.forEach(t=>{const m=t.members[0];prevDpsOf[TEAMS.indexOf(t)]=(m in last)?last[m]:null;last[m]=t.mainDps;});
+  }
   list.innerHTML=arr.map((t,i)=>{
     const rank=i+1;
+    const pv=prevDpsOf[TEAMS.indexOf(t)];
+    const gain=(pv&&pv>0)?((t.mainDps-pv)/pv*100):null;
     const rows=t.rows.map(r=>{
       const isMain=r===t.main, isTrans=r[0]==="剧变反应";
       const pctv=parseFloat(r[3]);
@@ -409,7 +416,7 @@ function render(){
         <span class="rank ${rank<=3?'top':''}">${rank}</span>
         <div class="tname"><div class="namescroll"><b>${t.members.map(m=>m+(CONST[m]?'<span class="csn">'+CONST[m]+'</span>':"")+(t.wtag[m]?'<span class="wtag">('+t.wtag[m]+")</span>":"")).join(" + ")}${t.tag?'<span class="tag'+(t.tagWarn?" warn":"")+'">'+t.tag+"</span>":""}</b></div><div class="dpsbar"><i style="width:${(t.dps/maxDps*100).toFixed(1)}%"></i></div></div>
         <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b><small class="mdps">${s==="max"?t.maxBy+" "+fmt(t.max):t.mainName+" "+fmt(t.mainDps)}</small></div>
-        <div class="kpi2"><small>${s==="role"?t.main[0]+" DPS":t.main[0]+" 暴击/暴伤"}</small><b>${s==="role"?fmt(t.mainDps):t.crit}</b></div>
+        <div class="kpi2"><small>${s==="role"&&gain!==null?"较上一队提升":t.main[0]+" 暴击/暴伤"}</small><b>${s==="role"?(gain!==null?(gain>=0?"+":"")+gain.toFixed(1)+"%":""):t.crit}</b></div>
         <span class="arrow">▼</span>
       </div>
       <div class="detail">
