@@ -83,6 +83,7 @@ tr.mainC td:last-child{border-radius:0 6px 6px 0}
 .st b{display:block;font-weight:500;font-size:12px}
 .st small{display:block;font-size:10px;color:var(--tx3);line-height:1.3;margin-top:1px}
 .pnl td,.pnl th{padding:4px 5px;font-size:11.5px}
+.pnl td.arti{color:var(--tx2);white-space:nowrap}
 .kpi2{width:124px}
 .wp{display:block;font-size:11px;color:var(--tx2);margin-top:1px;letter-spacing:0}
 .thumb .tip{font-size:11px;color:var(--tx3);margin-top:6px}
@@ -257,7 +258,7 @@ const TEAMS=[
  members:["桑多涅","奥黛塔","阿罗夏","沃雅妮莎"],
  rows:[["桑多涅",11645856,115158,"74.35%",242,"73秒 (72%)"],["奥黛塔",3368674,33311,"21.51%",117,"11秒 (11%)"],["阿罗夏",311618,3081,"1.99%",104,"11秒 (10%)"],["沃雅妮莎",78580,777,"0.50%",30,"6秒 (6%)"],["剧变反应",259034,2561,"1.65%",null,"—"]],
  panels:[["桑多涅","71% / 187%","112%","0.00%","18814","3097","807"],["奥黛塔","84% / 214%","116%","0.00%","17879","2503","1084"],["阿罗夏","65% / 78%","266%","0.00%","16965","1573","843"],["沃雅妮莎","28% / 66%","132%","0.00%","52362","864","514"]]},
-{img:"pic/1834a3bf93c066c529367351ec07ca38.jpg",total:1985.65,dps:176502,max:232304,maxBy:"丝柯克",time:112.50,tag:"（芙宁娜勇者/剧团或爱可菲冰伤杯或丝柯克蝶变几乎无差距）",
+{img:"pic/1834a3bf93c066c529367351ec07ca38.jpg",total:1985.65,dps:176502,max:232304,maxBy:"丝柯克",time:112.50,tag:"（芙勇者/剧团，爱冰伤/攻击杯，丝雾切/蝶变 无大差别）",
  members:["丝柯克","芙宁娜","沃雅妮莎","爱可菲"],
  rows:[["丝柯克",14298018,127094,"72.01%",175,"72秒 (64%)"],["芙宁娜",2525651,22450,"12.72%",148,"19秒 (17%)"],["沃雅妮莎",119180,1059,"0.60%",29,"6秒 (6%)"],["爱可菲",2913633,25899,"14.67%",113,"15秒 (13%)"],["剧变反应",0,0,"0.00%",null,"—"]],
  panels:[["丝柯克","73% / 212%","100%","73.60%","20571","2230","1015"],["芙宁娜","64% / 81%","199%","0.00%","39911","1054","777"],["沃雅妮莎","26% / 55%","133%","0.00%","54260","1005","539"],["爱可菲","64% / 243%","205%","0.00%","20947","2158","743"]]},
@@ -294,6 +295,27 @@ const STATS={
   "那维莱特":["dmg","hp"],
   "桑多涅":["atk"],"奥黛塔":["atk"],"菲谢尔":["atk"],
   "沃雅妮莎":["hp"],"旅行者":["atk"]
+};
+const ARTI={
+  "丝柯克":"深廊","伊涅芙":"饰金","兹白":"穹境","哥伦比娅":"纺月","夜兰":"绝缘",
+  "奥黛塔":"炉火","桑多涅":"幻灭","梦见月瑞希":"2精通","爱可菲":"剧团","班尼特":"宗师",
+  "神里绫华":"冰套","纳西妲":"草套","芙宁娜":"千岩","莉奈娅":"晨星","菲林斯":"穹境",
+  "菲谢尔":"千岩","那维莱特":"逐影","阿蕾奇诺":"谐律","雷电将军":"绝缘","香菱":"绝缘",
+  "魈":"2攻击","沃雅妮莎":"千岩",
+  "叶洛亚":"教官",
+  "申鹤":"宗师",
+  "莫娜":"宗师",
+  "希诺宁":"勇者",
+  "阿罗夏":"宗师",
+  "夏沃蕾":"散件",
+  "珐露珊":"风套",
+  "迪奥娜":"宗师",
+  "久岐忍":"饰金",
+  "行秋":"绝缘",
+  "砂糖":"风套",
+  "钟离":"千岩",
+  "茜特菈莉":"勇者",
+  "旅行者":"2攻击"
 };
 const SLBL={dmg:"伤害加成",atk:"攻击力",hp:"生命值",def:"防御力",em:"精通"};
 const SIDX={dmg:3,hp:4,atk:5,def:6};
@@ -380,7 +402,7 @@ function render(){
       const sts=STATS[p[0]]||[], cell=k=>k
         ?`<td class="num st"><b>${k==="em"?(EM[p[0]]||"—"):p[SIDX[k]]}</b><small>${SLBL[k]}</small></td>`
         :`<td class="num st"><b>—</b><small>—</small></td>`;
-      return `<tr class="${isMain?'mainC':''}"><td>${p[0]}</td><td>${(t.wp&&t.wp[p[0]])||WEAPON[p[0]]||"—"}</td><td class="num">${p[1]}</td><td class="num">${p[2]}</td>${cell(sts[0])}${cell(sts[1])}</tr>`;
+      return `<tr class="${isMain?'mainC':''}"><td>${p[0]}</td><td>${(t.wp&&t.wp[p[0]])||WEAPON[p[0]]||"—"}</td><td class="num">${p[1]}</td><td class="num">${p[2]}</td>${cell(sts[0])}${cell(sts[1])}<td class="arti">${ARTI[p[0]]||"—"}</td></tr>`;
     }).join("");
     return `<div class="card" data-idx="${TEAMS.indexOf(t)}">
       <div class="head">
@@ -397,7 +419,7 @@ function render(){
             <p class="hint">左右滑动查看完整表格</p>
           </div>
           <div class="tbl"><h3>属性面板</h3>
-            <div class="tscroll"><table class="pnl"><thead><tr><th>角色</th><th>武器</th><th class="num">暴击/暴伤</th><th class="num">充能</th><th class="num">属性1</th><th class="num">属性2</th></tr></thead><tbody>${panels}</tbody></table></div>
+            <div class="tscroll"><table class="pnl"><thead><tr><th>角色</th><th>武器</th><th class="num">暴击/暴伤</th><th class="num">充能</th><th class="num">属性1</th><th class="num">属性2</th><th>圣遗物</th></tr></thead><tbody>${panels}</tbody></table></div>
             <p class="hint">左右滑动查看完整表格</p>
           </div>
         </div>
