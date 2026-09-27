@@ -386,15 +386,18 @@ function render(){
     arr=[...arr].sort((a,b)=>key(b)-key(a));
   }
   count.textContent=kw?`匹配 ${arr.length} / ${TEAMS.length} 支队伍`:`共 ${arr.length} 支队伍`;
-  const prevDpsOf={};
+  const nxtOf={};
   if(s==="role"){
-    const last={};
-    arr.forEach(t=>{const m=t.members[0];prevDpsOf[TEAMS.indexOf(t)]=(m in last)?last[m]:null;last[m]=t.mainDps;});
+    for(let i=0;i<arr.length;i++){
+      const n=arr[i+1];
+      nxtOf[TEAMS.indexOf(arr[i])]=(n&&n.members[0]===arr[i].members[0])?n.dps:null;
+    }
   }
   list.innerHTML=arr.map((t,i)=>{
     const rank=i+1;
-    const pv=prevDpsOf[TEAMS.indexOf(t)];
-    const gain=(pv&&pv>0)?((t.mainDps-pv)/pv*100):null;
+    const nv=nxtOf[TEAMS.indexOf(t)];
+    const lo=nv?Math.min(t.dps,nv):0;
+    const gain=(nv&&lo>0)?(Math.abs(t.dps-nv)/lo*100):null;
     const rows=t.rows.map(r=>{
       const isMain=r===t.main, isTrans=r[0]==="剧变反应";
       const pctv=parseFloat(r[3]);
@@ -415,8 +418,8 @@ function render(){
       <div class="head">
         <span class="rank ${rank<=3?'top':''}">${rank}</span>
         <div class="tname"><div class="namescroll"><b>${t.members.map(m=>m+(CONST[m]?'<span class="csn">'+CONST[m]+'</span>':"")+(t.wtag[m]?'<span class="wtag">('+t.wtag[m]+")</span>":"")).join(" + ")}${t.tag?'<span class="tag'+(t.tagWarn?" warn":"")+'">'+t.tag+"</span>":""}</b></div><div class="dpsbar"><i style="width:${(t.dps/maxDps*100).toFixed(1)}%"></i></div></div>
-        <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b><small class="mdps">${s==="max"?t.maxBy+" "+fmt(t.max):t.mainName+" "+fmt(t.mainDps)}</small></div>
-        <div class="kpi2"><small>${s==="role"&&gain!==null?"较上一队提升":t.main[0]+" 暴击/暴伤"}</small><b>${s==="role"?(gain!==null?(gain>=0?"+":"")+gain.toFixed(1)+"%":""):t.crit}</b></div>
+        <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b><small class="mdps">${s==="role"?(gain!==null?"较下一队 +"+gain.toFixed(1)+"%":""):s==="max"?t.maxBy+" "+fmt(t.max):t.mainName+" "+fmt(t.mainDps)}</small></div>
+        <div class="kpi2"><small>${t.main[0]} 暴击/暴伤</small><b>${t.crit}</b></div>
         <span class="arrow">▼</span>
       </div>
       <div class="detail">
