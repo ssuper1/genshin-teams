@@ -111,10 +111,10 @@ tr.mainC td:last-child{border-radius:0 6px 6px 0}
   <div class="bar">
     <input id="q" type="search" placeholder="搜索角色名，如：阿蕾奇诺">
     <select id="sort">
+      <option value="role">按角色分组</option>
       <option value="dps">按总 DPS 降序</option>
       <option value="main">按主C DPS 降序</option>
       <option value="max">按最强一击降序</option>
-      <option value="role">按角色分组</option>
     </select>
     <button id="toggleAll">全部展开</button>
     <span class="count" id="count"></span>
@@ -409,7 +409,7 @@ function render(){
         <span class="rank ${rank<=3?'top':''}">${rank}</span>
         <div class="tname"><div class="namescroll"><b>${t.members.map(m=>m+(CONST[m]?'<span class="csn">'+CONST[m]+'</span>':"")+(t.wtag[m]?'<span class="wtag">('+t.wtag[m]+")</span>":"")).join(" + ")}${t.tag?'<span class="tag'+(t.tagWarn?" warn":"")+'">'+t.tag+"</span>":""}</b></div><div class="dpsbar"><i style="width:${(t.dps/maxDps*100).toFixed(1)}%"></i></div></div>
         <div class="kpi"><small>队伍 DPS</small><b>${fmt(t.dps)}</b><small class="mdps">${s==="max"?t.maxBy+" "+fmt(t.max):t.mainName+" "+fmt(t.mainDps)}</small></div>
-        <div class="kpi2"><small>${t.main[0]} 暴击/暴伤</small><b>${t.crit}</b></div>
+        <div class="kpi2"><small>${s==="role"?t.main[0]+" DPS":t.main[0]+" 暴击/暴伤"}</small><b>${s==="role"?fmt(t.mainDps):t.crit}</b></div>
         <span class="arrow">▼</span>
       </div>
       <div class="detail">
